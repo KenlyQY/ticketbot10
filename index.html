@@ -7,16 +7,16 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --primary: #4a8eff;
-            --text: #2d3436;
-            --bg: #f5f6f8;
-            --card-bg: #ffffff;
-            --hint: #7f8c8d;
-            --border: rgba(0, 0, 0, 0.08);
-            --success: #4caf50;
-            --warning: #ff9800;
-            --radius: 14px;
-            --shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+            --primary: var(--tg-theme-button-color, #2481cc);
+            --text: var(--tg-theme-text-color, #000000);
+            --bg: var(--tg-theme-bg-color, #f5f5f5);
+            --card-bg: var(--tg-theme-secondary-bg-color, #ffffff);
+            --hint: var(--tg-theme-hint-color, #7f8c8d);
+            --border: rgba(0, 0, 0, 0.1);
+            --success: #4CAF50;
+            --warning: #FFC107;
+            --radius: 12px;
+            --shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
         body {
@@ -33,7 +33,7 @@
         }
 
         .header {
-            padding: 16px;
+            padding: 14px 16px;
             font-size: 18px;
             font-weight: 600;
             text-align: center;
@@ -41,48 +41,22 @@
             position: sticky;
             top: 0;
             z-index: 100;
+            border-bottom: 1px solid var(--border);
         }
 
-        .tickets-toggle {
-            width: 100%;
-            padding: 12px;
-            background-color: var(--card-bg);
-            border: none;
-            border-radius: var(--radius);
-            font-size: 15px;
-            font-weight: 500;
-            text-align: left;
-            margin-bottom: 12px;
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 20px 0 12px;
+            padding-left: 8px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            cursor: pointer;
-            box-shadow: var(--shadow);
         }
 
-        .tickets-toggle::after {
-            content: "▼";
-            font-size: 12px;
-            transition: transform 0.3s;
-        }
-
-        .tickets-toggle.active::after {
-            transform: rotate(180deg);
-        }
-
-        .tickets-container {
-            display: none;
-            margin-bottom: 16px;
-        }
-
-        .tickets-container.active {
-            display: block;
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .section-title .count {
+            margin-left: 8px;
+            font-size: 14px;
+            color: var(--hint);
         }
 
         .ticket-card {
@@ -93,7 +67,7 @@
             box-shadow: var(--shadow);
         }
 
-        .status {
+        .status-badge {
             display: inline-block;
             padding: 4px 10px;
             border-radius: 20px;
@@ -102,13 +76,13 @@
             margin-bottom: 10px;
         }
 
-        .pending {
-            background-color: rgba(255, 152, 0, 0.1);
-            color: var(--warning);
+        .status-pending {
+            background-color: rgba(255, 193, 7, 0.15);
+            color: #FF9800;
         }
 
-        .answered {
-            background-color: rgba(76, 175, 80, 0.1);
+        .status-answered {
+            background-color: rgba(76, 175, 80, 0.15);
             color: var(--success);
         }
 
@@ -116,38 +90,62 @@
             color: var(--primary);
             font-weight: 600;
             font-size: 15px;
+            margin-bottom: 8px;
         }
 
         .ticket-text {
-            margin: 10px 0;
+            margin: 12px 0;
             font-size: 15px;
             line-height: 1.5;
+            white-space: pre-wrap;
         }
 
-        .answer {
-            background-color: rgba(0, 0, 0, 0.03);
-            padding: 12px;
+        .answer-card {
+            background-color: rgba(74, 142, 255, 0.05);
             border-radius: 8px;
-            margin: 14px 0;
+            padding: 12px;
+            margin: 16px 0 8px;
             border-left: 3px solid var(--primary);
         }
 
         .answer-title {
             font-weight: 600;
             font-size: 14px;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             color: var(--primary);
         }
 
-        .date {
+        .answer-text {
+            font-size: 14px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+
+        .ticket-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 14px;
+            font-size: 13px;
             color: var(--hint);
-            font-size: 12px;
-            margin-top: 10px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary);
+            color: var(--tg-theme-button-text-color, #fff);
+            border: none;
+            border-radius: var(--radius);
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 8px;
         }
 
         textarea {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             border-radius: var(--radius);
             border: 1px solid var(--border);
             background-color: var(--card-bg);
@@ -155,45 +153,55 @@
             min-height: 120px;
             resize: none;
             font-family: inherit;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 12px;
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            border-radius: var(--radius);
             font-size: 15px;
-            font-weight: 500;
-            cursor: pointer;
         }
 
         .empty-state {
             text-align: center;
-            padding: 20px;
+            padding: 30px 20px;
             color: var(--hint);
             font-size: 14px;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab {
+            padding: 10px 16px;
+            cursor: pointer;
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab.active {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
         }
     </style>
 </head>
 <body>
-    <div class="header">Поддержка</div>
+    <div class="header">Центр поддержки</div>
     <div class="container">
-        <button class="tickets-toggle" id="tickets-toggle">
-            <span>Мои тикеты</span>
-        </button>
-        
-        <div class="tickets-container" id="tickets-container">
-            <div id="tickets-list">
-                <div class="empty-state">Загрузка тикетов...</div>
-            </div>
+        <div class="tabs">
+            <div class="tab active" data-tab="all">Все тикеты</div>
+            <div class="tab" data-tab="pending">В обработке</div>
+            <div class="tab" data-tab="answered">Отвечено</div>
         </div>
-        
+
+        <div id="tickets-container">
+            <!-- Здесь будут отображаться тикеты -->
+            <div class="empty-state">Загрузка тикетов...</div>
+        </div>
+
         <div id="ticket-form">
-            <h3>Новый тикет</h3>
-            <textarea id="ticket-text" placeholder="Опишите вашу проблему..."></textarea>
-            <button class="btn" onclick="createTicket()">Отправить</button>
+            <h3>Новое обращение</h3>
+            <textarea 
+                id="ticket-text" 
+                placeholder="Опишите вашу проблему подробно..."></textarea>
+            <button class="btn" onclick="createTicket()">Отправить запрос</button>
         </div>
     </div>
 
@@ -201,66 +209,174 @@
         const tg = Telegram.WebApp;
         tg.expand();
         
-        // Обработчик аккордеона
-        const toggleBtn = document.getElementById('tickets-toggle');
-        const ticketsContainer = document.getElementById('tickets-container');
-        
-        toggleBtn.addEventListener('click', () => {
-            ticketsContainer.classList.toggle('active');
-            toggleBtn.classList.toggle('active');
+        // Переменные состояния
+        let currentTab = 'all';
+        let tickets = [];
+
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', () => {
+            // Обработчики вкладок
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    currentTab = tab.dataset.tab;
+                    renderTickets();
+                });
+            });
+            
+            // Загрузка тикетов
+            loadTickets();
         });
-        
-        // Автоматическое обновление
+
+        // Загрузка тикетов
         function loadTickets() {
             const urlParams = new URLSearchParams(window.location.search);
             const ticketsParam = urlParams.get('tickets');
             
             if (ticketsParam) {
                 try {
-                    const tickets = JSON.parse(ticketsParam);
-                    displayTickets(tickets);
+                    tickets = JSON.parse(ticketsParam);
+                    renderTickets();
                 } catch (e) {
-                    console.error("Error parsing tickets:", e);
-                    showErrorState();
+                    showError("Ошибка загрузки тикетов");
                 }
+            } else {
+                showEmptyState("Тикеты не найдены");
             }
         }
-        
-        function displayTickets(tickets) {
-            const container = document.getElementById('tickets-list');
+
+        // Отображение тикетов с фильтрацией
+        function renderTickets() {
+            const container = document.getElementById('tickets-container');
             
             if (!tickets || tickets.length === 0) {
-                container.innerHTML = '<div class="empty-state">У вас пока нет тикетов</div>';
+                showEmptyState("У вас пока нет тикетов");
                 return;
             }
             
-            container.innerHTML = tickets.map(ticket => `
+            // Фильтрация по вкладке
+            const filteredTickets = tickets.filter(ticket => {
+                if (currentTab === 'all') return true;
+                if (currentTab === 'pending') return ticket.status === 'pending';
+                if (currentTab === 'answered') return ticket.status === 'answered';
+                return true;
+            });
+            
+            if (filteredTickets.length === 0) {
+                showEmptyState(
+                    currentTab === 'pending' 
+                        ? "Нет тикетов в обработке" 
+                        : "Нет отвеченных тикетов"
+                );
+                return;
+            }
+            
+            // Группировка по статусу
+            const pendingTickets = filteredTickets.filter(t => t.status === 'pending');
+            const answeredTickets = filteredTickets.filter(t => t.status === 'answered');
+            
+            let html = '';
+            
+            // Сначала отвеченные, затем в обработке
+            if (currentTab === 'all' && answeredTickets.length > 0) {
+                html += `<div class="section-title">
+                    Решенные тикеты <span class="count">${answeredTickets.length}</span>
+                </div>`;
+                
+                answeredTickets.forEach(ticket => {
+                    html += renderTicket(ticket);
+                });
+            }
+            
+            if (currentTab === 'all' && pendingTickets.length > 0) {
+                html += `<div class="section-title">
+                    В обработке <span class="count">${pendingTickets.length}</span>
+                </div>`;
+                
+                pendingTickets.forEach(ticket => {
+                    html += renderTicket(ticket);
+                });
+            }
+            
+            if (currentTab !== 'all') {
+                filteredTickets.forEach(ticket => {
+                    html += renderTicket(ticket);
+                });
+            }
+            
+            container.innerHTML = html;
+        }
+
+        // Рендер одного тикета
+        function renderTicket(ticket) {
+            return `
                 <div class="ticket-card">
-                    <div class="status ${ticket.status}">
-                        ${ticket.status === 'answered' ? 'Отвечено' : 'В обработке'}
+                    <div class="status-badge ${ticket.status === 'answered' ? 'status-answered' : 'status-pending'}">
+                        ${ticket.status === 'answered' ? '✅ Решено' : '🕒 В обработке'}
                     </div>
                     <div class="ticket-id">Тикет #${ticket.id}</div>
-                    <div class="ticket-text">${ticket.text}</div>
+                    <div class="ticket-text">${escapeHtml(ticket.text)}</div>
                     ${ticket.answer ? `
-                    <div class="answer">
+                    <div class="answer-card">
                         <div class="answer-title">Ответ поддержки</div>
-                        <div>${ticket.answer}</div>
+                        <div class="answer-text">${escapeHtml(ticket.answer)}</div>
                     </div>
                     ` : ''}
-                    <div class="date">${new Date(ticket.created_at).toLocaleString()}</div>
+                    <div class="ticket-meta">
+                        <div class="date">📅 ${formatDate(ticket.created_at)}</div>
+                    </div>
                 </div>
-            `).join('');
+            `;
         }
-        
-        function showErrorState() {
-            const container = document.getElementById('tickets-list');
-            container.innerHTML = '<div class="empty-state">Ошибка загрузки тикетов</div>';
+
+        // Пустое состояние
+        function showEmptyState(message) {
+            document.getElementById('tickets-container').innerHTML = `
+                <div class="empty-state">${message}</div>
+            `;
         }
-        
+
+        // Ошибка
+        function showError(message) {
+            document.getElementById('tickets-container').innerHTML = `
+                <div class="empty-state">${message}</div>
+            `;
+        }
+
+        // Форматирование даты
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('ru-RU', {
+                day: 'numeric',
+                month: 'short',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Экранирование HTML
+        function escapeHtml(text) {
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;")
+                .replace(/\n/g, "<br>");
+        }
+
+        // Создание тикета
         function createTicket() {
             const text = document.getElementById('ticket-text').value.trim();
+            
             if (!text) {
-                tg.showAlert("Введите текст тикета");
+                tg.showAlert("Пожалуйста, опишите вашу проблему");
+                return;
+            }
+            
+            if (text.length > 1000) {
+                tg.showAlert("Максимальная длина - 1000 символов");
                 return;
             }
             
@@ -270,13 +386,10 @@
             }));
             
             document.getElementById('ticket-text').value = '';
-            tg.showAlert("Тикет создан! Список обновится автоматически.");
+            tg.showAlert("Запрос отправлен! Список обновится автоматически.");
         }
-        
-        // Первоначальная загрузка
-        loadTickets();
-        
-        // Обновление каждые 30 секунд
+
+        // Автоматическое обновление каждые 30 секунд
         setInterval(loadTickets, 30000);
     </script>
 </body>
