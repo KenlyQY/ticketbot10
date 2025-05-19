@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Поддержка</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--tg-theme-bg-color, #f5f5f5);
+            color: var(--tg-theme-text-color, #000000);
+        }
+        .container {
+            padding: 16px;
+        }
+        .header {
+            padding: 12px 16px;
+            font-size: 18px;
+            font-weight: 500;
+            text-align: center;
+            background-color: var(--tg-theme-secondary-bg-color, #f3f2f8);
+        }
+        .ticket {
+            background-color: var(--tg-theme-secondary-bg-color, #ffffff);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        .pending { background: #FFE082; color: #5D4037; }
+        .answered { background: #C8E6C9; color: #2E7D32; }
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid var(--tg-theme-hint-color, #cccccc);
+            background-color: var(--tg-theme-secondary-bg-color, #ffffff);
+            margin-bottom: 12px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--tg-theme-button-color, #2481cc);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .refresh-btn {
+            background-color: var(--tg-theme-secondary-bg-color, #f3f2f8);
+            color: var(--tg-theme-text-color, #000000);
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">Поддержка</div>
+    <div class="container">
+        <div id="tickets-list">
+            <p id="no-tickets">Загрузка тикетов...</p>
+        </div>
+        
+        <div id="ticket-form">
+            <h3>Новый тикет</h3>
+            <textarea id="ticket-text" placeholder="Опишите проблему..."></textarea>
+            <button onclick="createTicket()">Отправить</button>
+        </div>
+        
+        <button class="refresh-btn" onclick="window.location.reload()">🔄 Обновить</button>
+    </div>
+
+    <script>
+        const tg = Telegram.WebApp;
+        tg.expand();
+        tg.enableClosingConfirmation();
+        
+        // Парсим тикеты из URL при загрузке
+        function parseTicketsFromUrl() {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const ticketsParam = urlParams.get('tickets');
+                
+                if (ticketsParam) {
+                    const tickets = JSON.parse(ticketsParam);
+                    displayTickets(tickets);
+                    return true;
+                }
+            } catch (e) {
+                console.error("Ошибка парсинга:", e);
+            }
+            return false;
+        }
+        
+        // Отображение тикетов
+        function displayTickets(tickets) {
+            const container = document.getElementById('tickets-list');
+            
+            if (!tickets || tickets.length === 0) {
+                container.innerHTML = '<p id="no-tickets">У вас пока нет тикетов</p>';
+                return;
+            }
+            
+            container.innerHTML = tickets.map(ticket => `
+                <div class="ticket">
+                    <div class="status ${ticket.status}">
+                        ${ticket.status === 'answered' ? 'Отвечено' : 'В обработке'}
+                    </div>
+                    <p><strong>Тикет #${ticket.id}</strong></p>
+                    <p>${ticket.text}</p>
+                    ${ticket.answer ? `
+                    <div class="answer">
+                        <strong>Ответ поддержки:</strong>
+                        <p>${ticket.answer}</p>
+                    </div>
+                    ` : ''}
+                    <small>${new Date(ticket.created_at).toLocaleString()}</small>
+                </div>
+            `).join('');
+        }
+        
+        // Создание тикета
+        function createTicket() {
+            const text = document.getElementById('ticket-text').value.trim();
+            if (!text) {
+                tg.showAlert("Введите текст тикета");
+                return;
+            }
+            
+            tg.sendData(JSON.stringify({
+                action: "create_ticket",
+                text: text
+            }));
+            
+            document.getElementById('ticket-text').value = '';
+            tg.showAlert("Тикет создан! Нажмите 'Обновить' через несколько секунд.");
+        }
+        
+        // Инициализация
+        if (!parseTicketsFromUrl()) {
+            document.getElementById('no-tickets').textContent = 
+                "Нажмите 'Обновить' для загрузки тикетов";
+        }
+    </script>
+</body>
+</html>
