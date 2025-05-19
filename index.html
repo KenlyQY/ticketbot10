@@ -7,27 +7,47 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --primary-color: var(--tg-theme-button-color, #2481cc);
-            --text-color: var(--tg-theme-text-color, #222);
-            --bg-color: var(--tg-theme-bg-color, #f8f9fa);
-            --secondary-bg: var(--tg-theme-secondary-bg-color, #fff);
-            --hint-color: var(--tg-theme-hint-color, #7c7c7c);
-            --border-radius: 12px;
-            --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            --primary: var(--tg-theme-button-color, #4a8eff);
+            --primary-hover: var(--tg-theme-button-color, #3a7bef);
+            --text: var(--tg-theme-text-color, #2d3436);
+            --bg: var(--tg-theme-bg-color, #f5f6f8);
+            --card-bg: var(--tg-theme-secondary-bg-color, #ffffff);
+            --hint: var(--tg-theme-hint-color, #7f8c8d);
+            --border: rgba(0, 0, 0, 0.08);
+            --success: #4caf50;
+            --warning: #ff9800;
+            --radius: 14px;
+            --shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+            --transition: all 0.25s cubic-bezier(0.3, 0, 0.2, 1);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
             line-height: 1.5;
             -webkit-font-smoothing: antialiased;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        .header {
+            padding: 16px;
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+            background-color: var(--card-bg);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 0 var(--border);
+            backdrop-filter: blur(10px);
         }
 
         .container {
@@ -36,205 +56,270 @@
             margin: 0 auto;
         }
 
-        .header {
-            padding: 14px 16px;
-            font-size: 17px;
-            font-weight: 600;
-            text-align: center;
-            background-color: var(--secondary-bg);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .ticket {
-            background-color: var(--secondary-bg);
-            border-radius: var(--border-radius);
-            padding: 16px;
+        .ticket-card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 18px;
             margin-bottom: 12px;
-            box-shadow: var(--box-shadow);
-            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid var(--border);
         }
 
-        .ticket:hover {
+        .ticket-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
         }
 
-        .status {
-            display: inline-block;
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
             padding: 4px 10px;
             border-radius: 20px;
             font-size: 13px;
-            margin-bottom: 10px;
             font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            margin-bottom: 12px;
         }
 
-        .pending {
-            background: rgba(255, 193, 7, 0.15);
-            color: #ff9800;
+        .status-badge.pending {
+            background-color: rgba(255, 152, 0, 0.1);
+            color: var(--warning);
         }
 
-        .answered {
-            background: rgba(76, 175, 80, 0.15);
-            color: #4caf50;
+        .status-badge.answered {
+            background-color: rgba(76, 175, 80, 0.1);
+            color: var(--success);
         }
 
         .ticket-id {
-            color: var(--primary-color);
-            font-weight: 600;
             font-size: 15px;
-            margin-bottom: 6px;
-            display: block;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .ticket-id::before {
+            content: "📌";
         }
 
         .ticket-text {
-            margin: 10px 0;
             font-size: 15px;
             line-height: 1.5;
+            margin: 12px 0;
+            white-space: pre-wrap;
         }
 
-        .answer {
-            background-color: rgba(0, 0, 0, 0.03);
-            padding: 12px;
-            border-radius: 8px;
-            margin: 14px 0 10px;
-            border-left: 3px solid var(--primary-color);
+        .answer-card {
+            background-color: rgba(74, 142, 255, 0.05);
+            border-radius: 10px;
+            padding: 14px;
+            margin: 16px 0 8px;
+            border-left: 3px solid var(--primary);
         }
 
         .answer-title {
             font-weight: 600;
             font-size: 14px;
-            margin-bottom: 6px;
-            color: var(--primary-color);
+            margin-bottom: 8px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .answer-title::before {
+            content: "💬";
         }
 
         .answer-text {
             font-size: 14px;
             line-height: 1.5;
+            white-space: pre-wrap;
+        }
+
+        .ticket-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 14px;
+            font-size: 13px;
+            color: var(--hint);
         }
 
         .date {
-            color: var(--hint-color);
-            font-size: 12px;
             display: flex;
             align-items: center;
-            margin-top: 10px;
+            gap: 4px;
         }
 
-        .date::before {
-            content: "🕒";
-            margin-right: 4px;
-            font-size: 11px;
+        .section {
+            margin-bottom: 24px;
         }
 
         .section-title {
             font-size: 16px;
             font-weight: 600;
-            margin: 20px 0 12px;
-            color: var(--text-color);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title::before {
+            font-size: 18px;
+        }
+
+        .tickets-title::before {
+            content: "📋";
+        }
+
+        .new-ticket-title::before {
+            content: "✏️";
         }
 
         textarea {
             width: 100%;
-            padding: 12px;
-            border-radius: var(--border-radius);
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            background-color: var(--secondary-bg);
-            margin-bottom: 12px;
-            min-height: 100px;
-            resize: vertical;
+            padding: 14px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background-color: var(--card-bg);
+            margin-bottom: 16px;
+            min-height: 120px;
+            resize: none;
             font-family: inherit;
-            font-size: 14px;
-            transition: border-color 0.2s;
+            font-size: 15px;
+            transition: var(--transition);
+            outline: none;
         }
 
         textarea:focus {
-            outline: none;
-            border-color: var(--primary-color);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(74, 142, 255, 0.2);
         }
 
         .btn {
             width: 100%;
-            padding: 10px;
-            background-color: var(--primary-color);
+            padding: 12px;
+            background-color: var(--primary);
             color: var(--tg-theme-button-text-color, #fff);
             border: none;
-            border-radius: var(--border-radius);
-            font-size: 14px;
+            border-radius: var(--radius);
+            font-size: 15px;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: var(--transition);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 8px;
         }
 
         .btn:hover {
-            opacity: 0.9;
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
         }
 
         .btn:active {
-            transform: scale(0.98);
+            transform: translateY(0);
         }
 
         .btn-secondary {
-            background-color: var(--secondary-bg);
-            color: var(--text-color);
-            border: 1px solid rgba(0, 0, 0, 0.1);
+            background-color: var(--card-bg);
+            color: var(--text);
+            border: 1px solid var(--border);
         }
 
-        .loading {
-            text-align: center;
-            padding: 40px 0;
-            color: var(--hint-color);
-            font-size: 14px;
+        .btn-secondary:hover {
+            background-color: var(--card-bg);
+            border-color: var(--primary);
+            color: var(--primary);
         }
 
         .empty-state {
             text-align: center;
-            padding: 30px 0;
-            color: var(--hint-color);
+            padding: 40px 20px;
+            color: var(--hint);
         }
 
-        .empty-state-icon {
-            font-size: 40px;
-            margin-bottom: 10px;
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
             opacity: 0.5;
+        }
+
+        .empty-text {
+            font-size: 15px;
+            margin-bottom: 16px;
+        }
+
+        .skeleton {
+            animation: skeleton-loading 1.5s infinite ease-in-out;
+            background-color: rgba(0, 0, 0, 0.05);
+            border-radius: 4px;
+        }
+
+        @keyframes skeleton-loading {
+            0% { opacity: 0.5; }
+            50% { opacity: 0.8; }
+            100% { opacity: 0.5; }
         }
 
         .divider {
             height: 1px;
-            background: rgba(0, 0, 0, 0.05);
-            margin: 20px 0;
+            background-color: var(--border);
+            margin: 24px 0;
+        }
+
+        .char-counter {
+            text-align: right;
+            font-size: 13px;
+            color: var(--hint);
+            margin-top: -12px;
+            margin-bottom: 12px;
+        }
+
+        .char-counter.warning {
+            color: var(--warning);
         }
     </style>
 </head>
 <body>
     <div class="header">Центр поддержки</div>
     <div class="container">
-        <div id="tickets-list">
-            <div class="loading">Загрузка ваших обращений...</div>
+        <div class="section">
+            <div class="section-title tickets-title">Ваши обращения</div>
+            <div id="tickets-list">
+                <div class="ticket-card">
+                    <div class="skeleton" style="height: 20px; width: 80px; margin-bottom: 12px;"></div>
+                    <div class="skeleton" style="height: 16px; width: 120px; margin-bottom: 16px;"></div>
+                    <div class="skeleton" style="height: 14px; margin-bottom: 4px;"></div>
+                    <div class="skeleton" style="height: 14px; width: 90%; margin-bottom: 4px;"></div>
+                    <div class="skeleton" style="height: 14px; width: 70%; margin-bottom: 16px;"></div>
+                    <div class="skeleton" style="height: 12px; width: 100px;"></div>
+                </div>
+            </div>
         </div>
         
         <div class="divider"></div>
         
-        <div id="ticket-form">
-            <div class="section-title">Новое обращение</div>
+        <div class="section">
+            <div class="section-title new-ticket-title">Новое обращение</div>
             <textarea 
                 id="ticket-text" 
-                placeholder="Опишите вашу проблему максимально подробно..."></textarea>
+                placeholder="Опишите вашу проблему подробно...\n\n• Что произошло?\n• Когда это случилось?\n• Каков ожидаемый результат?"
+                maxlength="1000"
+                rows="5"></textarea>
+            <div id="char-counter" class="char-counter">0/1000</div>
             <button class="btn" onclick="createTicket()">
                 <span>Отправить запрос</span>
             </button>
         </div>
         
         <button class="btn btn-secondary" onclick="window.location.reload()">
-            <span>🔄 Обновить список</span>
+            <span>🔄 Обновить</span>
         </button>
     </div>
 
@@ -243,88 +328,142 @@
         tg.expand();
         tg.enableClosingConfirmation();
         
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', () => {
+            parseTicketsFromUrl();
+            setupTextareaCounter();
+            
+            // Адаптация под тему Telegram
+            if (tg.colorScheme) {
+                document.documentElement.style.setProperty('--bg', tg.themeParams.bg_color || '#f5f6f8');
+                document.documentElement.style.setProperty('--text', tg.themeParams.text_color || '#2d3436');
+            }
+        });
+
         // Форматирование даты
         function formatDate(dateString) {
+            const date = new Date(dateString);
             const options = { 
                 day: 'numeric', 
-                month: 'numeric', 
-                year: 'numeric',
+                month: 'short', 
                 hour: '2-digit', 
                 minute: '2-digit' 
             };
-            return new Date(dateString).toLocaleString('ru-RU', options);
+            return date.toLocaleString('ru-RU', options);
         }
         
-        // Парсим тикеты из URL
+        // Парсинг тикетов
         function parseTicketsFromUrl() {
             try {
                 const urlParams = new URLSearchParams(window.location.search);
                 const ticketsParam = urlParams.get('tickets');
                 
                 if (ticketsParam) {
-                    const tickets = JSON.parse(ticketsParam);
-                    displayTickets(tickets);
-                    return true;
+                    setTimeout(() => {
+                        const tickets = JSON.parse(ticketsParam);
+                        displayTickets(tickets);
+                    }, 300); // Искусственная задержка для плавности
+                } else {
+                    showEmptyState();
                 }
             } catch (e) {
                 console.error("Ошибка загрузки:", e);
                 showErrorState();
             }
-            return false;
         }
         
         // Отображение тикетов
         function displayTickets(tickets) {
-            try {
-                const container = document.getElementById('tickets-list');
-                
-                if (!Array.isArray(tickets)) {
-                    throw new Error("Некорректные данные");
-                }
-                
-                if (tickets.length === 0) {
-                    showEmptyState();
-                    return;
-                }
-                
-                container.innerHTML = tickets.map(ticket => `
-                    <div class="ticket">
-                        <div class="status ${ticket.status}">
-                            ${ticket.status === 'answered' ? 'Ответ получен' : 'В обработке'}
-                        </div>
-                        <span class="ticket-id">Запрос #${ticket.id}</span>
-                        <div class="ticket-text">${ticket.text}</div>
-                        ${ticket.answer ? `
-                        <div class="answer">
-                            <div class="answer-title">Ответ поддержки</div>
-                            <div class="answer-text">${ticket.answer}</div>
-                        </div>
-                        ` : ''}
-                        <div class="date">${formatDate(ticket.created_at)}</div>
-                    </div>
-                `).join('');
-            } catch (e) {
-                console.error("Ошибка отображения:", e);
+            const container = document.getElementById('tickets-list');
+            
+            if (!Array.isArray(tickets)) {
                 showErrorState();
+                return;
             }
+            
+            if (tickets.length === 0) {
+                showEmptyState();
+                return;
+            }
+            
+            container.innerHTML = tickets.map(ticket => `
+                <div class="ticket-card">
+                    <div class="status-badge ${ticket.status}">
+                        ${ticket.status === 'answered' ? '✅ Решено' : '🕒 В работе'}
+                    </div>
+                    <div class="ticket-id">Запрос #${ticket.id}</div>
+                    <div class="ticket-text">${escapeHtml(ticket.text)}</div>
+                    ${ticket.answer ? `
+                    <div class="answer-card">
+                        <div class="answer-title">Ответ поддержки</div>
+                        <div class="answer-text">${escapeHtml(ticket.answer)}</div>
+                    </div>
+                    ` : ''}
+                    <div class="ticket-meta">
+                        <div class="date">📅 ${formatDate(ticket.created_at)}</div>
+                        ${ticket.status === 'answered' ? '<div class="status">✔️ Ответ получен</div>' : ''}
+                    </div>
+                </div>
+            `).join('');
         }
         
+        // Экранирование HTML
+        function escapeHtml(text) {
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;")
+                .replace(/\n/g, "<br>");
+        }
+        
+        // Пустое состояние
         function showEmptyState() {
             document.getElementById('tickets-list').innerHTML = `
                 <div class="empty-state">
-                    <div class="empty-state-icon">📭</div>
-                    <div>У вас пока нет обращений</div>
+                    <div class="empty-icon">📭</div>
+                    <div class="empty-text">У вас пока нет обращений</div>
+                    <button class="btn" onclick="document.getElementById('ticket-text').focus()">
+                        <span>Создать первое обращение</span>
+                    </button>
                 </div>
             `;
         }
         
+        // Состояние ошибки
         function showErrorState() {
             document.getElementById('tickets-list').innerHTML = `
                 <div class="empty-state">
-                    <div class="empty-state-icon">⚠️</div>
-                    <div>Ошибка загрузки данных</div>
+                    <div class="empty-icon">⚠️</div>
+                    <div class="empty-text">Не удалось загрузить данные</div>
+                    <button class="btn btn-secondary" onclick="window.location.reload()">
+                        <span>Попробовать снова</span>
+                    </button>
                 </div>
             `;
+        }
+        
+        // Счетчик символов
+        function setupTextareaCounter() {
+            const textarea = document.getElementById('ticket-text');
+            const counter = document.getElementById('char-counter');
+            
+            textarea.addEventListener('input', function() {
+                const length = this.value.length;
+                counter.textContent = `${length}/1000`;
+                
+                if (length > 900) {
+                    counter.classList.add('warning');
+                } else {
+                    counter.classList.remove('warning');
+                }
+                
+                if (length > 1000) {
+                    this.value = this.value.substring(0, 1000);
+                    tg.showAlert("Максимальная длина - 1000 символов");
+                }
+            });
         }
         
         // Создание тикета
@@ -337,39 +476,29 @@
             }
             
             if (text.length > 1000) {
-                tg.showAlert("Максимальная длина сообщения - 1000 символов");
+                tg.showAlert("Максимальная длина - 1000 символов");
                 return;
             }
             
-            tg.MainButton.showProgress();
+            tg.MainButton.showProgress(true);
             tg.sendData(JSON.stringify({
                 action: "create_ticket",
                 text: text
             }));
             
+            // Плавное скрытие формы
             document.getElementById('ticket-text').value = '';
-            tg.showAlert("Ваш запрос отправлен! Обновите список через несколько секунд.");
-            setTimeout(() => tg.MainButton.hideProgress(), 1500);
+            document.getElementById('char-counter').textContent = '0/1000';
+            
+            tg.showAlert("✅ Ваш запрос отправлен!", () => {
+                tg.MainButton.hideProgress();
+            });
         }
-        
-        // Ограничение длины текста
-        document.getElementById('ticket-text').addEventListener('input', function() {
-            const maxLength = 1000;
-            if (this.value.length > maxLength) {
-                this.value = this.value.substring(0, maxLength);
-                tg.showAlert(`Максимум ${maxLength} символов`);
-            }
-        });
         
         // Кнопка "Назад"
         if (tg.platform !== 'unknown') {
             tg.BackButton.show();
             tg.BackButton.onClick(() => tg.close());
-        }
-        
-        // Инициализация
-        if (!parseTicketsFromUrl()) {
-            showErrorState();
         }
     </script>
 </body>
