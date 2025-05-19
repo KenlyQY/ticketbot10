@@ -6,112 +6,236 @@
     <title>Поддержка</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body {
-            font-family: -apple-system, sans-serif;
+        :root {
+            --primary-color: var(--tg-theme-button-color, #2481cc);
+            --text-color: var(--tg-theme-text-color, #222);
+            --bg-color: var(--tg-theme-bg-color, #f8f9fa);
+            --secondary-bg: var(--tg-theme-secondary-bg-color, #fff);
+            --hint-color: var(--tg-theme-hint-color, #7c7c7c);
+            --border-radius: 12px;
+            --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            background-color: var(--tg-theme-bg-color, #f5f5f5);
-            color: var(--tg-theme-text-color, #000000);
         }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
         .container {
             padding: 16px;
-            max-width: 600px;
+            max-width: 100%;
             margin: 0 auto;
         }
+
         .header {
-            padding: 12px 16px;
-            font-size: 18px;
-            font-weight: 500;
+            padding: 14px 16px;
+            font-size: 17px;
+            font-weight: 600;
             text-align: center;
-            background-color: var(--tg-theme-secondary-bg-color, #f3f2f8);
+            background-color: var(--secondary-bg);
             position: sticky;
             top: 0;
             z-index: 100;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         }
+
         .ticket {
-            background-color: var(--tg-theme-secondary-bg-color, #ffffff);
-            border-radius: 12px;
+            background-color: var(--secondary-bg);
+            border-radius: var(--border-radius);
             padding: 16px;
             margin-bottom: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: var(--box-shadow);
+            transition: transform 0.2s, box-shadow 0.2s;
         }
+
+        .ticket:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
         .status {
             display: inline-block;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 14px;
-            margin-bottom: 8px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+            margin-bottom: 10px;
             font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        .pending { background: #FFE082; color: #5D4037; }
-        .answered { background: #C8E6C9; color: #2E7D32; }
+
+        .pending {
+            background: rgba(255, 193, 7, 0.15);
+            color: #ff9800;
+        }
+
+        .answered {
+            background: rgba(76, 175, 80, 0.15);
+            color: #4caf50;
+        }
+
+        .ticket-id {
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .ticket-text {
+            margin: 10px 0;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .answer {
+            background-color: rgba(0, 0, 0, 0.03);
+            padding: 12px;
+            border-radius: 8px;
+            margin: 14px 0 10px;
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .answer-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 6px;
+            color: var(--primary-color);
+        }
+
+        .answer-text {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .date {
+            color: var(--hint-color);
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .date::before {
+            content: "🕒";
+            margin-right: 4px;
+            font-size: 11px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 20px 0 12px;
+            color: var(--text-color);
+        }
+
         textarea {
             width: 100%;
             padding: 12px;
-            border-radius: 10px;
-            border: 1px solid var(--tg-theme-hint-color, #cccccc);
-            background-color: var(--tg-theme-secondary-bg-color, #ffffff);
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            background-color: var(--secondary-bg);
             margin-bottom: 12px;
-            min-height: 120px;
+            min-height: 100px;
             resize: vertical;
             font-family: inherit;
+            font-size: 14px;
+            transition: border-color 0.2s;
         }
-        button {
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .btn {
             width: 100%;
-            padding: 12px;
-            background-color: var(--tg-theme-button-color, #2481cc);
-            color: var(--tg-theme-button-text-color, #ffffff);
+            padding: 10px;
+            background-color: var(--primary-color);
+            color: var(--tg-theme-button-text-color, #fff);
             border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            cursor: pointer;
+            border-radius: var(--border-radius);
+            font-size: 14px;
             font-weight: 500;
-            transition: opacity 0.2s;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
-        button:active {
-            opacity: 0.8;
+
+        .btn:hover {
+            opacity: 0.9;
         }
-        .refresh-btn {
-            background-color: var(--tg-theme-secondary-bg-color, #f3f2f8);
-            color: var(--tg-theme-text-color, #000000);
-            margin-top: 8px;
+
+        .btn:active {
+            transform: scale(0.98);
         }
-        .answer {
-            background-color: var(--tg-theme-bg-color, #f0f0f0);
-            padding: 12px;
-            border-radius: 8px;
-            margin: 12px 0;
+
+        .btn-secondary {
+            background-color: var(--secondary-bg);
+            color: var(--text-color);
+            border: 1px solid rgba(0, 0, 0, 0.1);
         }
-        .ticket-id {
-            color: var(--tg-theme-link-color, #2481cc);
-            font-weight: bold;
-        }
-        .date {
-            color: var(--tg-theme-hint-color, #888888);
-            font-size: 12px;
-            display: block;
-            margin-top: 8px;
-        }
+
         .loading {
             text-align: center;
-            padding: 20px;
+            padding: 40px 0;
+            color: var(--hint-color);
+            font-size: 14px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px 0;
+            color: var(--hint-color);
+        }
+
+        .empty-state-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+            opacity: 0.5;
+        }
+
+        .divider {
+            height: 1px;
+            background: rgba(0, 0, 0, 0.05);
+            margin: 20px 0;
         }
     </style>
 </head>
 <body>
-    <div class="header">Поддержка</div>
+    <div class="header">Центр поддержки</div>
     <div class="container">
         <div id="tickets-list">
-            <p id="no-tickets" class="loading">Загрузка тикетов...</p>
+            <div class="loading">Загрузка ваших обращений...</div>
         </div>
+        
+        <div class="divider"></div>
         
         <div id="ticket-form">
-            <h3>Новый тикет</h3>
-            <textarea id="ticket-text" placeholder="Опишите вашу проблему подробно..."></textarea>
-            <button onclick="createTicket()">Отправить</button>
+            <div class="section-title">Новое обращение</div>
+            <textarea 
+                id="ticket-text" 
+                placeholder="Опишите вашу проблему максимально подробно..."></textarea>
+            <button class="btn" onclick="createTicket()">
+                <span>Отправить запрос</span>
+            </button>
         </div>
         
-        <button class="refresh-btn" onclick="window.location.reload()">🔄 Обновить</button>
+        <button class="btn btn-secondary" onclick="window.location.reload()">
+            <span>🔄 Обновить список</span>
+        </button>
     </div>
 
     <script>
@@ -121,11 +245,17 @@
         
         // Форматирование даты
         function formatDate(dateString) {
-            const date = new Date(dateString);
-            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            const options = { 
+                day: 'numeric', 
+                month: 'numeric', 
+                year: 'numeric',
+                hour: '2-digit', 
+                minute: '2-digit' 
+            };
+            return new Date(dateString).toLocaleString('ru-RU', options);
         }
         
-        // Парсим тикеты из URL при загрузке
+        // Парсим тикеты из URL
         function parseTicketsFromUrl() {
             try {
                 const urlParams = new URLSearchParams(window.location.search);
@@ -137,9 +267,8 @@
                     return true;
                 }
             } catch (e) {
-                console.error("Ошибка парсинга:", e);
-                document.getElementById('no-tickets').textContent = 
-                    "Ошибка загрузки тикетов";
+                console.error("Ошибка загрузки:", e);
+                showErrorState();
             }
             return false;
         }
@@ -150,41 +279,60 @@
                 const container = document.getElementById('tickets-list');
                 
                 if (!Array.isArray(tickets)) {
-                    throw new Error("Invalid tickets data");
+                    throw new Error("Некорректные данные");
                 }
                 
                 if (tickets.length === 0) {
-                    container.innerHTML = '<p id="no-tickets">У вас пока нет тикетов</p>';
+                    showEmptyState();
                     return;
                 }
                 
                 container.innerHTML = tickets.map(ticket => `
                     <div class="ticket">
                         <div class="status ${ticket.status}">
-                            ${ticket.status === 'answered' ? 'Отвечено' : 'В обработке'}
+                            ${ticket.status === 'answered' ? 'Ответ получен' : 'В обработке'}
                         </div>
-                        <p><span class="ticket-id">Тикет #${ticket.id}</span></p>
-                        <p>${ticket.text}</p>
+                        <span class="ticket-id">Запрос #${ticket.id}</span>
+                        <div class="ticket-text">${ticket.text}</div>
                         ${ticket.answer ? `
                         <div class="answer">
-                            <strong>Ответ поддержки:</strong>
-                            <p>${ticket.answer}</p>
+                            <div class="answer-title">Ответ поддержки</div>
+                            <div class="answer-text">${ticket.answer}</div>
                         </div>
                         ` : ''}
-                        <span class="date">${formatDate(ticket.created_at)}</span>
+                        <div class="date">${formatDate(ticket.created_at)}</div>
                     </div>
                 `).join('');
             } catch (e) {
-                console.error("Error displaying tickets:", e);
-                container.innerHTML = '<p id="no-tickets">Ошибка загрузки тикетов</p>';
+                console.error("Ошибка отображения:", e);
+                showErrorState();
             }
+        }
+        
+        function showEmptyState() {
+            document.getElementById('tickets-list').innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">📭</div>
+                    <div>У вас пока нет обращений</div>
+                </div>
+            `;
+        }
+        
+        function showErrorState() {
+            document.getElementById('tickets-list').innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">⚠️</div>
+                    <div>Ошибка загрузки данных</div>
+                </div>
+            `;
         }
         
         // Создание тикета
         function createTicket() {
             const text = document.getElementById('ticket-text').value.trim();
+            
             if (!text) {
-                tg.showAlert("Введите текст тикета");
+                tg.showAlert("Пожалуйста, опишите вашу проблему");
                 return;
             }
             
@@ -200,15 +348,16 @@
             }));
             
             document.getElementById('ticket-text').value = '';
-            tg.showAlert("Тикет создан! Нажмите 'Обновить' через несколько секунд.");
-            setTimeout(() => tg.MainButton.hideProgress(), 2000);
+            tg.showAlert("Ваш запрос отправлен! Обновите список через несколько секунд.");
+            setTimeout(() => tg.MainButton.hideProgress(), 1500);
         }
         
         // Ограничение длины текста
         document.getElementById('ticket-text').addEventListener('input', function() {
-            if (this.value.length > 1000) {
-                tg.showAlert("Максимальная длина сообщения - 1000 символов");
-                this.value = this.value.substring(0, 1000);
+            const maxLength = 1000;
+            if (this.value.length > maxLength) {
+                this.value = this.value.substring(0, maxLength);
+                tg.showAlert(`Максимум ${maxLength} символов`);
             }
         });
         
@@ -220,8 +369,7 @@
         
         // Инициализация
         if (!parseTicketsFromUrl()) {
-            document.getElementById('no-tickets').textContent = 
-                "Нажмите 'Обновить' для загрузки тикетов";
+            showErrorState();
         }
     </script>
 </body>
