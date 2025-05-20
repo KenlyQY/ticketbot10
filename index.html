@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Поддержка</title>
+    <title>Центр поддержки</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -18,30 +18,33 @@
             --danger: #F44336;
             --radius: 12px;
             --shadow: 0 1px 3px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background-color: var(--bg);
             color: var(--text);
             line-height: 1.5;
             -webkit-font-smoothing: antialiased;
+            padding-bottom: 80px;
         }
 
         .container {
             padding: 16px;
             max-width: 100%;
-            padding-bottom: 70px;
+            margin: 0 auto;
         }
 
         .header {
-            padding: 14px 16px;
+            padding: 16px;
             font-size: 18px;
             font-weight: 600;
             text-align: center;
@@ -51,6 +54,7 @@
             z-index: 100;
             border-bottom: 1px solid var(--border);
             box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
         }
 
         .tabs {
@@ -62,26 +66,30 @@
             background-color: var(--bg);
             z-index: 90;
             padding-top: 8px;
+            backdrop-filter: blur(10px);
         }
 
         .tab {
-            padding: 10px 16px;
+            padding: 12px 16px;
             cursor: pointer;
             font-weight: 500;
             border-bottom: 2px solid transparent;
-            transition: all 0.2s;
+            transition: var(--transition);
             font-size: 14px;
+            flex: 1;
+            text-align: center;
         }
 
         .tab.active {
             border-bottom-color: var(--primary);
             color: var(--primary);
+            font-weight: 600;
         }
 
         .section-title {
             font-size: 16px;
             font-weight: 600;
-            margin: 20px 0 12px;
+            margin: 24px 0 12px;
             padding-left: 8px;
             display: flex;
             align-items: center;
@@ -89,24 +97,27 @@
 
         .section-title .count {
             margin-left: 8px;
-            font-size: 14px;
+            font-size: 13px;
             color: var(--hint);
             background-color: var(--border);
             padding: 2px 8px;
             border-radius: 10px;
+            font-weight: 500;
         }
 
         .ticket-card {
             background-color: var(--card-bg);
             border-radius: var(--radius);
             padding: 16px;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
             box-shadow: var(--shadow);
-            transition: transform 0.2s;
+            transition: var(--transition);
+            border: 1px solid var(--border);
         }
 
         .ticket-card:active {
             transform: scale(0.98);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
 
         .status-badge {
@@ -115,7 +126,7 @@
             border-radius: 20px;
             font-size: 13px;
             font-weight: 500;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
         .status-pending {
@@ -135,19 +146,20 @@
             margin-bottom: 8px;
             display: flex;
             justify-content: space-between;
+            align-items: center;
         }
 
         .ticket-text {
             margin: 12px 0;
             font-size: 15px;
-            line-height: 1.5;
+            line-height: 1.6;
             white-space: pre-wrap;
         }
 
         .answer-card {
-            background-color: rgba(74, 142, 255, 0.05);
+            background-color: rgba(74, 142, 255, 0.08);
             border-radius: 8px;
-            padding: 12px;
+            padding: 14px;
             margin: 16px 0 8px;
             border-left: 3px solid var(--primary);
         }
@@ -157,11 +169,19 @@
             font-size: 14px;
             margin-bottom: 8px;
             color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .answer-title svg {
+            width: 16px;
+            height: 16px;
         }
 
         .answer-text {
             font-size: 14px;
-            line-height: 1.5;
+            line-height: 1.6;
             white-space: pre-wrap;
         }
 
@@ -169,7 +189,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 14px;
+            margin-top: 16px;
             font-size: 13px;
             color: var(--hint);
         }
@@ -184,12 +204,17 @@
             font-size: 16px;
             font-weight: 500;
             cursor: pointer;
-            margin-top: 8px;
-            transition: opacity 0.2s;
+            margin-top: 12px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .btn:active {
             opacity: 0.8;
+            transform: scale(0.98);
         }
 
         .btn-secondary {
@@ -200,20 +225,29 @@
 
         textarea {
             width: 100%;
-            padding: 14px;
+            padding: 16px;
             border-radius: var(--radius);
             border: 1px solid var(--border);
             background-color: var(--card-bg);
-            margin-bottom: 12px;
-            min-height: 140px;
+            margin-bottom: 16px;
+            min-height: 160px;
             resize: none;
             font-family: inherit;
             font-size: 15px;
             color: var(--text);
+            line-height: 1.5;
+            transition: var(--transition);
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(36, 129, 204, 0.1);
         }
 
         textarea::placeholder {
             color: var(--hint);
+            opacity: 0.7;
         }
 
         .empty-state {
@@ -221,6 +255,16 @@
             padding: 40px 20px;
             color: var(--hint);
             font-size: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .empty-state svg {
+            width: 48px;
+            height: 48px;
+            opacity: 0.5;
         }
 
         .loader {
@@ -230,7 +274,7 @@
             width: 24px;
             height: 24px;
             animation: spin 1s linear infinite;
-            margin: 30px auto;
+            margin: 40px auto;
         }
 
         @keyframes spin {
@@ -240,62 +284,169 @@
 
         .rating-stars {
             display: flex;
-            gap: 6px;
-            margin-top: 8px;
+            gap: 8px;
+            margin-top: 12px;
         }
 
         .star {
-            font-size: 20px;
+            font-size: 24px;
             cursor: pointer;
             color: var(--warning);
-            transition: transform 0.2s;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .star:hover {
+            transform: scale(1.1);
         }
 
         .star:active {
-            transform: scale(1.2);
+            transform: scale(0.9);
         }
 
         .floating-btn {
             position: fixed;
-            bottom: 16px;
-            right: 16px;
-            width: 56px;
-            height: 56px;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             background-color: var(--primary);
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
             cursor: pointer;
             z-index: 100;
+            transition: var(--transition);
+        }
+
+        .floating-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .floating-btn svg {
+            width: 24px;
+            height: 24px;
         }
 
         .search-box {
-            padding: 10px 16px;
+            padding: 12px 16px;
             margin-bottom: 16px;
             background-color: var(--card-bg);
             border-radius: var(--radius);
             border: 1px solid var(--border);
             font-size: 15px;
             width: 100%;
+            transition: var(--transition);
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(36, 129, 204, 0.1);
         }
 
         .refresh-btn {
             position: fixed;
-            bottom: 16px;
-            left: 16px;
+            bottom: 20px;
+            left: 20px;
             background-color: var(--card-bg);
             border: 1px solid var(--border);
-            width: 56px;
-            height: 56px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             z-index: 100;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+        }
+
+        .refresh-btn:active {
+            transform: scale(0.95);
+        }
+
+        .refresh-btn svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--primary);
+            color: white;
+            padding: 12px 20px;
+            border-radius: var(--radius);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            z-index: 110;
+            opacity: 0;
+            transition: var(--transition);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .notification.show {
+            opacity: 1;
+            bottom: 100px;
+        }
+
+        .skeleton {
+            background-color: var(--border);
+            border-radius: var(--radius);
+            animation: pulse 1.5s infinite ease-in-out;
+            margin-bottom: 16px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 0.3; }
+        }
+
+        .ticket-form-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .close-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .close-btn:active {
+            transform: scale(0.9);
+        }
+
+        .character-count {
+            font-size: 13px;
+            color: var(--hint);
+            text-align: right;
+            margin-top: -12px;
+            margin-bottom: 12px;
+        }
+
+        .character-count.warning {
+            color: var(--warning);
+        }
+
+        .character-count.error {
+            color: var(--danger);
         }
     </style>
 </head>
@@ -308,23 +459,38 @@
             <div class="tab" data-tab="answered">Решено</div>
         </div>
 
-        <input type="text" class="search-box" id="search-input" placeholder="Поиск по тикетам...">
+        <input type="text" class="search-box" id="search-input" placeholder="🔍 Поиск по тикетам...">
 
         <div id="tickets-container">
             <div class="loader"></div>
         </div>
 
         <div id="ticket-form" style="display: none;">
-            <h3 style="margin-bottom: 12px;">Новое обращение</h3>
+            <div class="ticket-form-header">
+                <h3>Новое обращение</h3>
+                <div class="close-btn" onclick="hideTicketForm()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </div>
+            </div>
             <textarea 
                 id="ticket-text" 
-                placeholder="Опишите вашу проблему максимально подробно...\n\nПример:\n• Что произошло?\n• Когда это случилось?\n• Каковы ожидаемые действия?"></textarea>
-            <button class="btn" onclick="createTicket()">Отправить запрос</button>
-            <button class="btn btn-secondary" onclick="hideTicketForm()">Отмена</button>
+                placeholder="Опишите вашу проблему максимально подробно...\n\nПример:\n• Что произошло?\n• Когда это случилось?\n• Каковы ожидаемые действия?"
+                oninput="updateCharacterCount()"></textarea>
+            <div id="character-count" class="character-count">0/1000</div>
+            <button class="btn" onclick="createTicket()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 2L11 13"></path>
+                    <path d="M22 2l-7 20-4-9-9-4 20-7z"></path>
+                </svg>
+                Отправить запрос
+            </button>
         </div>
 
         <div class="refresh-btn" onclick="loadTickets(true)">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M23 4v6h-6M1 20v-6h6"></path>
                 <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
             </svg>
@@ -337,6 +503,8 @@
             <line x1="5" y1="12" x2="19" y2="12"></line>
         </svg>
     </div>
+
+    <div class="notification" id="notification"></div>
 
     <script>
         const tg = Telegram.WebApp;
@@ -355,8 +523,7 @@
         // Инициализация
         document.addEventListener('DOMContentLoaded', () => {
             // Настройка темы Telegram
-            document.documentElement.style.setProperty('--bg', tg.themeParams.bg_color || '#f5f5f5');
-            document.documentElement.style.setProperty('--text', tg.themeParams.text_color || '#000000');
+            applyTheme();
             
             // Обработчики вкладок
             document.querySelectorAll('.tab').forEach(tab => {
@@ -378,6 +545,11 @@
             loadTickets();
         });
 
+        function applyTheme() {
+            document.documentElement.style.setProperty('--bg', tg.themeParams.bg_color || '#f5f5f5');
+            document.documentElement.style.setProperty('--text', tg.themeParams.text_color || '#000000');
+        }
+
         // Загрузка тикетов
         function loadTickets(force = false) {
             if (state.isLoading) return;
@@ -391,40 +563,27 @@
             if (ticketsParam && !force) {
                 try {
                     state.tickets = JSON.parse(decodeURIComponent(ticketsParam));
+                    console.log("Загружены тикеты:", state.tickets);
                     filterTickets();
                 } catch (e) {
+                    console.error("Ошибка парсинга:", e);
                     showError("Ошибка загрузки данных");
-                    console.error("Parse error:", e);
                 } finally {
                     state.isLoading = false;
                 }
             } else {
-                // В реальном приложении здесь может быть fetch запрос к API
-                setTimeout(() => {
-                    if (ticketsParam) {
-                        try {
-                            state.tickets = JSON.parse(decodeURIComponent(ticketsParam));
-                            filterTickets();
-                        } catch (e) {
-                            showError("Ошибка обновления");
-                        }
-                    } else {
-                        showEmptyState("Нет данных о тикетах");
-                    }
-                    state.isLoading = false;
-                }, 500);
+                showEmptyState("Нет данных о тикетах");
+                state.isLoading = false;
             }
         }
 
         // Фильтрация тикетов
         function filterTickets() {
             state.filteredTickets = state.tickets.filter(ticket => {
-                // Фильтр по вкладке
                 let tabMatch = true;
                 if (state.currentTab === 'pending') tabMatch = ticket.status === 'pending';
                 if (state.currentTab === 'answered') tabMatch = ticket.status === 'answered';
                 
-                // Фильтр по поиску
                 const searchMatch = !state.searchQuery || 
                     ticket.text.toLowerCase().includes(state.searchQuery) ||
                     (ticket.answer && ticket.answer.toLowerCase().includes(state.searchQuery));
@@ -454,7 +613,7 @@
             
             let html = '';
             
-            // Группировка по статусу (только для вкладки "Все")
+            // Группировка по статусу
             if (state.currentTab === 'all') {
                 const answered = state.filteredTickets.filter(t => t.status === 'answered');
                 const pending = state.filteredTickets.filter(t => t.status === 'pending');
@@ -504,7 +663,12 @@
                     
                     ${ticket.answer ? `
                     <div class="answer-card">
-                        <div class="answer-title">Ответ поддержки</div>
+                        <div class="answer-title">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                            Ответ поддержки
+                        </div>
                         <div class="answer-text">${escapeHtml(ticket.answer)}</div>
                     </div>
                     ` : ''}
@@ -515,7 +679,7 @@
                         <div class="rating-stars">
                             ${[1, 2, 3, 4, 5].map(star => `
                                 <span class="star" data-ticket="${ticket.id}" data-rating="${star}">
-                                    ☆
+                                    ${ticket.rating >= star ? '★' : '☆'}
                                 </span>
                             `).join('')}
                         </div>
@@ -538,41 +702,78 @@
         // Создание тикета
         function createTicket() {
             const text = document.getElementById('ticket-text').value.trim();
+            const charCount = text.length;
             
-            if (!text) {
-                tg.showAlert("Пожалуйста, опишите вашу проблему");
+            if (charCount === 0) {
+                showNotification("Пожалуйста, опишите вашу проблему", "error");
                 return;
             }
             
-            if (text.length > 1000) {
-                tg.showAlert("Максимальная длина - 1000 символов");
+            if (charCount > 1000) {
+                showNotification("Максимальная длина - 1000 символов", "error");
                 return;
             }
             
-            tg.sendData(JSON.stringify({
+            console.log("Отправка тикета:", text);
+            
+            const data = {
                 action: "create_ticket",
                 text: text
-            }));
+            };
+            
+            tg.sendData(JSON.stringify(data));
             
             document.getElementById('ticket-text').value = '';
+            updateCharacterCount();
             hideTicketForm();
-            tg.showAlert("Запрос отправлен! Список обновится автоматически.");
+            showNotification("Запрос отправлен!", "success");
         }
 
         // Оценка тикета
         function rateTicket(ticketId, rating) {
+            console.log(`Оценка тикета ${ticketId}: ${rating} звезд`);
+            
             tg.sendData(JSON.stringify({
                 action: "rate_ticket",
                 ticket_id: parseInt(ticketId),
                 rating: rating
             }));
             
-            // Оптимистичное обновление UI
+            // Оптимистичное обновление
             const ticket = state.tickets.find(t => t.id === parseInt(ticketId));
             if (ticket) {
                 ticket.rating = rating;
                 filterTickets();
+                showNotification("Спасибо за оценку!", "success");
             }
+        }
+
+        // Обновление счетчика символов
+        function updateCharacterCount() {
+            const textarea = document.getElementById('ticket-text');
+            const charCount = textarea.value.length;
+            const counter = document.getElementById('character-count');
+            
+            counter.textContent = `${charCount}/1000`;
+            
+            if (charCount > 900) {
+                counter.className = "character-count warning";
+            } else if (charCount > 1000) {
+                counter.className = "character-count error";
+            } else {
+                counter.className = "character-count";
+            }
+        }
+
+        // Показать уведомление
+        function showNotification(message, type = "info") {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification show ${type}`;
+            
+            setTimeout(() => {
+                notification.className = "notification";
+            }, 3000);
         }
 
         // Показать форму создания тикета
@@ -602,14 +803,29 @@
         // Пустое состояние
         function showEmptyState(message) {
             document.getElementById('tickets-container').innerHTML = `
-                <div class="empty-state">${message}</div>
+                <div class="empty-state">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M3 3h18v18H3z"></path>
+                        <path d="M21 9H3"></path>
+                        <path d="M21 15H3"></path>
+                        <path d="M12 3v18"></path>
+                    </svg>
+                    ${message}
+                </div>
             `;
         }
 
         // Показать ошибку
         function showError(message) {
             document.getElementById('tickets-container').innerHTML = `
-                <div class="empty-state">❌ ${message}</div>
+                <div class="empty-state">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    ${message}
+                </div>
             `;
         }
 
@@ -636,7 +852,7 @@
                 .replace(/\n/g, "<br>");
         }
 
-        // Пуллинг обновлений каждые 30 сек
+        // Обновление каждые 30 сек
         setInterval(() => loadTickets(), 30000);
     </script>
 </body>
