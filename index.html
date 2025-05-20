@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,21 +15,29 @@
             --border: rgba(0, 0, 0, 0.1);
             --success: #4CAF50;
             --warning: #FFC107;
+            --danger: #F44336;
             --radius: 12px;
             --shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
-        body {
-            font-family: -apple-system, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
         }
 
         .container {
             padding: 16px;
             max-width: 100%;
+            padding-bottom: 70px;
         }
 
         .header {
@@ -42,6 +50,32 @@
             top: 0;
             z-index: 100;
             border-bottom: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 50px;
+            background-color: var(--bg);
+            z-index: 90;
+            padding-top: 8px;
+        }
+
+        .tab {
+            padding: 10px 16px;
+            cursor: pointer;
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .tab.active {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
         }
 
         .section-title {
@@ -57,6 +91,9 @@
             margin-left: 8px;
             font-size: 14px;
             color: var(--hint);
+            background-color: var(--border);
+            padding: 2px 8px;
+            border-radius: 10px;
         }
 
         .ticket-card {
@@ -65,6 +102,11 @@
             padding: 16px;
             margin-bottom: 12px;
             box-shadow: var(--shadow);
+            transition: transform 0.2s;
+        }
+
+        .ticket-card:active {
+            transform: scale(0.98);
         }
 
         .status-badge {
@@ -91,6 +133,8 @@
             font-weight: 600;
             font-size: 15px;
             margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
         }
 
         .ticket-text {
@@ -132,15 +176,26 @@
 
         .btn {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             background-color: var(--primary);
             color: var(--tg-theme-button-text-color, #fff);
             border: none;
             border-radius: var(--radius);
-            font-size: 15px;
+            font-size: 16px;
             font-weight: 500;
             cursor: pointer;
             margin-top: 8px;
+            transition: opacity 0.2s;
+        }
+
+        .btn:active {
+            opacity: 0.8;
+        }
+
+        .btn-secondary {
+            background-color: var(--card-bg);
+            color: var(--text);
+            border: 1px solid var(--border);
         }
 
         textarea {
@@ -150,35 +205,97 @@
             border: 1px solid var(--border);
             background-color: var(--card-bg);
             margin-bottom: 12px;
-            min-height: 120px;
+            min-height: 140px;
             resize: none;
             font-family: inherit;
             font-size: 15px;
+            color: var(--text);
+        }
+
+        textarea::placeholder {
+            color: var(--hint);
         }
 
         .empty-state {
             text-align: center;
-            padding: 30px 20px;
+            padding: 40px 20px;
             color: var(--hint);
-            font-size: 14px;
+            font-size: 15px;
         }
 
-        .tabs {
+        .loader {
+            border: 3px solid var(--border);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            margin: 30px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .rating-stars {
             display: flex;
-            margin-bottom: 16px;
-            border-bottom: 1px solid var(--border);
+            gap: 6px;
+            margin-top: 8px;
         }
 
-        .tab {
-            padding: 10px 16px;
+        .star {
+            font-size: 20px;
             cursor: pointer;
-            font-weight: 500;
-            border-bottom: 2px solid transparent;
+            color: var(--warning);
+            transition: transform 0.2s;
         }
 
-        .tab.active {
-            border-bottom-color: var(--primary);
-            color: var(--primary);
+        .star:active {
+            transform: scale(1.2);
+        }
+
+        .floating-btn {
+            position: fixed;
+            bottom: 16px;
+            right: 16px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+            z-index: 100;
+        }
+
+        .search-box {
+            padding: 10px 16px;
+            margin-bottom: 16px;
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            font-size: 15px;
+            width: 100%;
+        }
+
+        .refresh-btn {
+            position: fixed;
+            bottom: 16px;
+            left: 16px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
         }
     </style>
 </head>
@@ -186,184 +303,234 @@
     <div class="header">Центр поддержки</div>
     <div class="container">
         <div class="tabs">
-            <div class="tab active" data-tab="all">Все тикеты</div>
-            <div class="tab" data-tab="pending">В обработке</div>
-            <div class="tab" data-tab="answered">Отвечено</div>
+            <div class="tab active" data-tab="all">Все</div>
+            <div class="tab" data-tab="pending">В работе</div>
+            <div class="tab" data-tab="answered">Решено</div>
         </div>
+
+        <input type="text" class="search-box" id="search-input" placeholder="Поиск по тикетам...">
 
         <div id="tickets-container">
-            <!-- Здесь будут отображаться тикеты -->
-            <div class="empty-state">Загрузка тикетов...</div>
+            <div class="loader"></div>
         </div>
 
-        <div id="ticket-form">
-            <h3>Новое обращение</h3>
+        <div id="ticket-form" style="display: none;">
+            <h3 style="margin-bottom: 12px;">Новое обращение</h3>
             <textarea 
                 id="ticket-text" 
-                placeholder="Опишите вашу проблему подробно..."></textarea>
+                placeholder="Опишите вашу проблему максимально подробно...\n\nПример:\n• Что произошло?\n• Когда это случилось?\n• Каковы ожидаемые действия?"></textarea>
             <button class="btn" onclick="createTicket()">Отправить запрос</button>
+            <button class="btn btn-secondary" onclick="hideTicketForm()">Отмена</button>
         </div>
+
+        <div class="refresh-btn" onclick="loadTickets(true)">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M23 4v6h-6M1 20v-6h6"></path>
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+            </svg>
+        </div>
+    </div>
+
+    <div class="floating-btn" onclick="showTicketForm()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
     </div>
 
     <script>
         const tg = Telegram.WebApp;
         tg.expand();
+        tg.enableClosingConfirmation();
         
-        // Переменные состояния
-        let currentTab = 'all';
-        let tickets = [];
+        // Состояние приложения
+        const state = {
+            tickets: [],
+            filteredTickets: [],
+            currentTab: 'all',
+            searchQuery: '',
+            isLoading: false
+        };
 
         // Инициализация
         document.addEventListener('DOMContentLoaded', () => {
+            // Настройка темы Telegram
+            document.documentElement.style.setProperty('--bg', tg.themeParams.bg_color || '#f5f5f5');
+            document.documentElement.style.setProperty('--text', tg.themeParams.text_color || '#000000');
+            
             // Обработчики вкладок
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.addEventListener('click', () => {
                     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                     tab.classList.add('active');
-                    currentTab = tab.dataset.tab;
-                    renderTickets();
+                    state.currentTab = tab.dataset.tab;
+                    filterTickets();
                 });
             });
             
-            // Загрузка тикетов
+            // Поиск
+            document.getElementById('search-input').addEventListener('input', (e) => {
+                state.searchQuery = e.target.value.toLowerCase();
+                filterTickets();
+            });
+            
+            // Загрузка данных
             loadTickets();
         });
 
         // Загрузка тикетов
-        function loadTickets() {
+        function loadTickets(force = false) {
+            if (state.isLoading) return;
+            state.isLoading = true;
+            
+            showLoader();
+            
             const urlParams = new URLSearchParams(window.location.search);
             const ticketsParam = urlParams.get('tickets');
             
-            if (ticketsParam) {
+            if (ticketsParam && !force) {
                 try {
-                    tickets = JSON.parse(ticketsParam);
-                    renderTickets();
+                    state.tickets = JSON.parse(ticketsParam);
+                    filterTickets();
                 } catch (e) {
-                    showError("Ошибка загрузки тикетов");
+                    showError("Ошибка загрузки данных");
+                    console.error("Parse error:", e);
+                } finally {
+                    state.isLoading = false;
                 }
             } else {
-                showEmptyState("Тикеты не найдены");
+                // В реальном приложении здесь может быть fetch запрос к API
+                setTimeout(() => {
+                    if (ticketsParam) {
+                        try {
+                            state.tickets = JSON.parse(ticketsParam);
+                            filterTickets();
+                        } catch (e) {
+                            showError("Ошибка обновления");
+                        }
+                    } else {
+                        showEmptyState("Нет данных о тикетах");
+                    }
+                    state.isLoading = false;
+                }, 500);
             }
         }
 
-        // Отображение тикетов с фильтрацией
+        // Фильтрация тикетов
+        function filterTickets() {
+            state.filteredTickets = state.tickets.filter(ticket => {
+                // Фильтр по вкладке
+                let tabMatch = true;
+                if (state.currentTab === 'pending') tabMatch = ticket.status === 'pending';
+                if (state.currentTab === 'answered') tabMatch = ticket.status === 'answered';
+                
+                // Фильтр по поиску
+                const searchMatch = !state.searchQuery || 
+                    ticket.text.toLowerCase().includes(state.searchQuery) ||
+                    (ticket.answer && ticket.answer.toLowerCase().includes(state.searchQuery));
+                
+                return tabMatch && searchMatch;
+            });
+            
+            renderTickets();
+        }
+
+        // Отображение тикетов
         function renderTickets() {
             const container = document.getElementById('tickets-container');
             
-            if (!tickets || tickets.length === 0) {
-                showEmptyState("У вас пока нет тикетов");
-                return;
-            }
-            
-            // Фильтрация по вкладке
-            const filteredTickets = tickets.filter(ticket => {
-                if (currentTab === 'all') return true;
-                if (currentTab === 'pending') return ticket.status === 'pending';
-                if (currentTab === 'answered') return ticket.status === 'answered';
-                return true;
-            });
-            
-            if (filteredTickets.length === 0) {
+            if (state.filteredTickets.length === 0) {
                 showEmptyState(
-                    currentTab === 'pending' 
-                        ? "Нет тикетов в обработке" 
-                        : "Нет отвеченных тикетов"
+                    state.searchQuery 
+                        ? "Ничего не найдено" 
+                        : state.currentTab === 'all' 
+                            ? "У вас пока нет тикетов" 
+                            : state.currentTab === 'pending' 
+                                ? "Нет тикетов в работе" 
+                                : "Нет решенных тикетов"
                 );
                 return;
             }
             
-            // Группировка по статусу
-            const pendingTickets = filteredTickets.filter(t => t.status === 'pending');
-            const answeredTickets = filteredTickets.filter(t => t.status === 'answered');
-            
             let html = '';
             
-            // Сначала отвеченные, затем в обработке
-            if (currentTab === 'all' && answeredTickets.length > 0) {
-                html += `<div class="section-title">
-                    Решенные тикеты <span class="count">${answeredTickets.length}</span>
-                </div>`;
+            // Группировка по статусу (только для вкладки "Все")
+            if (state.currentTab === 'all') {
+                const answered = state.filteredTickets.filter(t => t.status === 'answered');
+                const pending = state.filteredTickets.filter(t => t.status === 'pending');
                 
-                answeredTickets.forEach(ticket => {
-                    html += renderTicket(ticket);
-                });
-            }
-            
-            if (currentTab === 'all' && pendingTickets.length > 0) {
-                html += `<div class="section-title">
-                    В обработке <span class="count">${pendingTickets.length}</span>
-                </div>`;
+                if (answered.length > 0) {
+                    html += `<div class="section-title">
+                        Решенные тикеты <span class="count">${answered.length}</span>
+                    </div>`;
+                    answered.forEach(ticket => html += renderTicket(ticket));
+                }
                 
-                pendingTickets.forEach(ticket => {
-                    html += renderTicket(ticket);
-                });
-            }
-            
-            if (currentTab !== 'all') {
-                filteredTickets.forEach(ticket => {
-                    html += renderTicket(ticket);
-                });
+                if (pending.length > 0) {
+                    html += `<div class="section-title">
+                        В работе <span class="count">${pending.length}</span>
+                    </div>`;
+                    pending.forEach(ticket => html += renderTicket(ticket));
+                }
+            } else {
+                state.filteredTickets.forEach(ticket => html += renderTicket(ticket));
             }
             
             container.innerHTML = html;
+            
+            // Инициализация рейтинга
+            document.querySelectorAll('.star').forEach(star => {
+                star.addEventListener('click', function() {
+                    const ticketId = this.dataset.ticket;
+                    const rating = parseInt(this.dataset.rating);
+                    rateTicket(ticketId, rating);
+                });
+            });
         }
 
         // Рендер одного тикета
         function renderTicket(ticket) {
             return `
                 <div class="ticket-card">
-                    <div class="status-badge ${ticket.status === 'answered' ? 'status-answered' : 'status-pending'}">
-                        ${ticket.status === 'answered' ? '✅ Решено' : '🕒 В обработке'}
+                    <div class="ticket-id">
+                        <span>Тикет #${ticket.id}</span>
+                        <span class="status-badge ${ticket.status === 'answered' ? 'status-answered' : 'status-pending'}">
+                            ${ticket.status === 'answered' ? '✅ Решено' : '🕒 В работе'}
+                        </span>
                     </div>
-                    <div class="ticket-id">Тикет #${ticket.id}</div>
                     <div class="ticket-text">${escapeHtml(ticket.text)}</div>
+                    
                     ${ticket.answer ? `
                     <div class="answer-card">
                         <div class="answer-title">Ответ поддержки</div>
                         <div class="answer-text">${escapeHtml(ticket.answer)}</div>
                     </div>
                     ` : ''}
+                    
+                    ${ticket.status === 'answered' && !ticket.rating ? `
+                    <div style="margin-top: 12px;">
+                        <div style="font-size: 14px; color: var(--hint);">Оцените ответ:</div>
+                        <div class="rating-stars">
+                            ${[1, 2, 3, 4, 5].map(star => `
+                                <span class="star" data-ticket="${ticket.id}" data-rating="${star}">
+                                    ☆
+                                </span>
+                            `).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+                    
+                    ${ticket.rating ? `
+                    <div style="margin-top: 8px; font-size: 14px; color: var(--hint);">
+                        Ваша оценка: ${'★'.repeat(ticket.rating)}${'☆'.repeat(5 - ticket.rating)}
+                    </div>
+                    ` : ''}
+                    
                     <div class="ticket-meta">
                         <div class="date">📅 ${formatDate(ticket.created_at)}</div>
                     </div>
                 </div>
             `;
-        }
-
-        // Пустое состояние
-        function showEmptyState(message) {
-            document.getElementById('tickets-container').innerHTML = `
-                <div class="empty-state">${message}</div>
-            `;
-        }
-
-        // Ошибка
-        function showError(message) {
-            document.getElementById('tickets-container').innerHTML = `
-                <div class="empty-state">${message}</div>
-            `;
-        }
-
-        // Форматирование даты
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            return date.toLocaleDateString('ru-RU', {
-                day: 'numeric',
-                month: 'short',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-        }
-
-        // Экранирование HTML
-        function escapeHtml(text) {
-            return text
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;")
-                .replace(/\n/g, "<br>");
         }
 
         // Создание тикета
@@ -386,11 +553,84 @@
             }));
             
             document.getElementById('ticket-text').value = '';
+            hideTicketForm();
             tg.showAlert("Запрос отправлен! Список обновится автоматически.");
         }
 
-        // Автоматическое обновление каждые 30 секунд
-        setInterval(loadTickets, 30000);
+        // Оценка тикета
+        function rateTicket(ticketId, rating) {
+            tg.sendData(JSON.stringify({
+                action: "rate_ticket",
+                ticket_id: ticketId,
+                rating: rating
+            }));
+            
+            tg.showAlert("Спасибо за оценку!");
+        }
+
+        // Показать форму создания тикета
+        function showTicketForm() {
+            document.getElementById('ticket-form').style.display = 'block';
+            document.getElementById('tickets-container').style.display = 'none';
+            document.querySelector('.tabs').style.display = 'none';
+            document.querySelector('.search-box').style.display = 'none';
+            document.getElementById('ticket-text').focus();
+        }
+
+        // Скрыть форму
+        function hideTicketForm() {
+            document.getElementById('ticket-form').style.display = 'none';
+            document.getElementById('tickets-container').style.display = 'block';
+            document.querySelector('.tabs').style.display = 'flex';
+            document.querySelector('.search-box').style.display = 'block';
+        }
+
+        // Показать загрузчик
+        function showLoader() {
+            document.getElementById('tickets-container').innerHTML = `
+                <div class="loader"></div>
+            `;
+        }
+
+        // Пустое состояние
+        function showEmptyState(message) {
+            document.getElementById('tickets-container').innerHTML = `
+                <div class="empty-state">${message}</div>
+            `;
+        }
+
+        // Показать ошибку
+        function showError(message) {
+            document.getElementById('tickets-container').innerHTML = `
+                <div class="empty-state">❌ ${message}</div>
+            `;
+        }
+
+        // Форматирование даты
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('ru-RU', {
+                day: 'numeric',
+                month: 'short',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Экранирование HTML
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;")
+                .replace(/\n/g, "<br>");
+        }
+
+        // Пуллинг обновлений каждые 30 сек
+        setInterval(() => loadTickets(), 30000);
     </script>
 </body>
 </html>
