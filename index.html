@@ -113,6 +113,7 @@
             box-shadow: var(--shadow);
             transition: var(--transition);
             border: 1px solid var(--border);
+            cursor: pointer;
         }
 
         .ticket-card:active {
@@ -137,6 +138,11 @@
         .status-answered {
             background-color: rgba(76, 175, 80, 0.15);
             color: var(--success);
+        }
+
+        .status-in-chat {
+            background-color: rgba(36, 129, 204, 0.15);
+            color: var(--primary);
         }
 
         .ticket-id {
@@ -448,12 +454,104 @@
         .character-count.error {
             color: var(--danger);
         }
+
+        /* Стили для чата */
+        .chat-container {
+            display: none;
+            padding: 0;
+            height: calc(100vh - 50px);
+        }
+
+        .chat-messages {
+            height: calc(100vh - 150px);
+            overflow-y: auto;
+            padding: 16px;
+            background-color: var(--bg);
+        }
+
+        .chat-message {
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            border-radius: var(--radius);
+            max-width: 80%;
+            word-wrap: break-word;
+            position: relative;
+        }
+
+        .incoming {
+            background-color: var(--card-bg);
+            align-self: flex-start;
+            margin-right: auto;
+        }
+
+        .outgoing {
+            background-color: var(--primary);
+            color: white;
+            align-self: flex-end;
+            margin-left: auto;
+        }
+
+        .chat-input-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 12px 16px;
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 8px;
+        }
+
+        #chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            font-size: 15px;
+            background-color: var(--card-bg);
+            color: var(--text);
+        }
+
+        .chat-send-btn {
+            padding: 12px 16px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .chat-header {
+            padding: 16px;
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+            background-color: var(--card-bg);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-back-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 16px;
+            cursor: pointer;
+            padding: 4px;
+        }
     </style>
 </head>
 <body>
-    <div class="header">Центр поддержки</div>
+    <div class="header" id="main-header">Центр поддержки</div>
     <div class="container">
-        <div class="tabs">
+        <div class="tabs" id="tabs">
             <div class="tab active" data-tab="all">Все</div>
             <div class="tab" data-tab="pending">В работе</div>
             <div class="tab" data-tab="answered">Решено</div>
@@ -489,6 +587,20 @@
             </button>
         </div>
 
+        <!-- Чат с поддержкой -->
+        <div id="chat-container" class="chat-container">
+            <div class="chat-header">
+                <button class="chat-back-btn" onclick="hideChat()">← Назад</button>
+                <span>Чат с поддержкой</span>
+                <div style="width: 48px;"></div> <!-- Для выравнивания -->
+            </div>
+            <div id="chat-messages" class="chat-messages"></div>
+            <div class="chat-input-container">
+                <input type="text" id="chat-input" placeholder="Введите сообщение..." onkeypress="handleChatInputKeypress(event)">
+                <button class="chat-send-btn" onclick="sendChatMessage()">Отправить</button>
+            </div>
+        </div>
+
         <div class="refresh-btn" onclick="loadTickets(true)">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M23 4v6h-6M1 20v-6h6"></path>
@@ -517,7 +629,8 @@
             filteredTickets: [],
             currentTab: 'all',
             searchQuery: '',
-            isLoading: false
+            isLoading: false,
+            currentChatTicket: null
         };
 
         // Инициализация
@@ -581,7 +694,7 @@
         function filterTickets() {
             state.filteredTickets = state.tickets.filter(ticket => {
                 let tabMatch = true;
-                if (state.currentTab === 'pending') tabMatch = ticket.status === 'pending';
+                if (state.currentTab === 'pending') tabMatch = ticket.status === 'pending' || ticket.status === 'in_chat';
                 if (state.currentTab === 'answered') tabMatch = ticket.status === 'answered';
                 
                 const searchMatch = !state.searchQuery || 
@@ -617,12 +730,13 @@
             if (state.currentTab === 'all') {
                 const answered = state.filteredTickets.filter(t => t.status === 'answered');
                 const pending = state.filteredTickets.filter(t => t.status === 'pending');
+                const inChat = state.filteredTickets.filter(t => t.status === 'in_chat');
                 
-                if (answered.length > 0) {
+                if (inChat.length > 0) {
                     html += `<div class="section-title">
-                        Решенные тикеты <span class="count">${answered.length}</span>
+                        Активные чаты <span class="count">${inChat.length}</span>
                     </div>`;
-                    answered.forEach(ticket => html += renderTicket(ticket));
+                    inChat.forEach(ticket => html += renderTicket(ticket));
                 }
                 
                 if (pending.length > 0) {
@@ -630,6 +744,13 @@
                         В работе <span class="count">${pending.length}</span>
                     </div>`;
                     pending.forEach(ticket => html += renderTicket(ticket));
+                }
+                
+                if (answered.length > 0) {
+                    html += `<div class="section-title">
+                        Решенные тикеты <span class="count">${answered.length}</span>
+                    </div>`;
+                    answered.forEach(ticket => html += renderTicket(ticket));
                 }
             } else {
                 state.filteredTickets.forEach(ticket => html += renderTicket(ticket));
@@ -645,23 +766,35 @@
                     rateTicket(ticketId, rating);
                 });
             });
+            
+            // Инициализация кликов по тикетам
+            document.querySelectorAll('.ticket-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const ticketId = this.dataset.ticketId;
+                    const ticket = state.tickets.find(t => t.id == ticketId);
+                    if (ticket && ticket.status === 'in_chat') {
+                        showChat(ticket);
+                    }
+                });
+            });
         }
 
         // Рендер одного тикета
         function renderTicket(ticket) {
             const rating = ticket.rating !== undefined ? ticket.rating : null;
+            const isChat = ticket.status === 'in_chat';
             
             return `
-                <div class="ticket-card">
+                <div class="ticket-card" data-ticket-id="${ticket.id}">
                     <div class="ticket-id">
                         <span>Тикет #${ticket.id}</span>
-                        <span class="status-badge ${ticket.status === 'answered' ? 'status-answered' : 'status-pending'}">
-                            ${ticket.status === 'answered' ? '✅ Решено' : '🕒 В работе'}
+                        <span class="status-badge ${isChat ? 'status-in-chat' : ticket.status === 'answered' ? 'status-answered' : 'status-pending'}">
+                            ${isChat ? '💬 В чате' : ticket.status === 'answered' ? '✅ Решено' : '🕒 В работе'}
                         </span>
                     </div>
                     <div class="ticket-text">${escapeHtml(ticket.text)}</div>
                     
-                    ${ticket.answer ? `
+                    ${ticket.answer && !isChat ? `
                     <div class="answer-card">
                         <div class="answer-title">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -670,6 +803,12 @@
                             Ответ поддержки
                         </div>
                         <div class="answer-text">${escapeHtml(ticket.answer)}</div>
+                    </div>
+                    ` : ''}
+                    
+                    ${isChat ? `
+                    <div style="margin-top: 12px; color: var(--primary); font-weight: 500;">
+                        💬 Нажмите, чтобы продолжить чат
                     </div>
                     ` : ''}
                     
@@ -697,6 +836,87 @@
                     </div>
                 </div>
             `;
+        }
+
+        // Показать чат
+        function showChat(ticket) {
+            state.currentChatTicket = ticket;
+            document.getElementById('main-header').style.display = 'none';
+            document.getElementById('tabs').style.display = 'none';
+            document.getElementById('search-input').style.display = 'none';
+            document.getElementById('tickets-container').style.display = 'none';
+            document.getElementById('ticket-form').style.display = 'none';
+            
+            document.getElementById('chat-container').style.display = 'block';
+            document.getElementById('chat-messages').innerHTML = '<div class="loader"></div>';
+            
+            // Загрузка сообщений чата
+            setTimeout(() => {
+                loadChatMessages(ticket.id);
+            }, 300);
+        }
+
+        // Скрыть чат
+        function hideChat() {
+            document.getElementById('main-header').style.display = 'block';
+            document.getElementById('tabs').style.display = 'flex';
+            document.getElementById('search-input').style.display = 'block';
+            document.getElementById('tickets-container').style.display = 'block';
+            document.getElementById('chat-container').style.display = 'none';
+            
+            state.currentChatTicket = null;
+        }
+
+        // Загрузка сообщений чата
+        function loadChatMessages(ticketId) {
+            const chat = document.getElementById('chat-messages');
+            chat.innerHTML = '';
+            
+            // В реальном приложении здесь будет запрос к серверу
+            // Для демонстрации используем заглушку
+            const messages = [
+                { text: "Здравствуйте! Чем могу помочь?", is_outgoing: false, created_at: new Date().toISOString() },
+                { text: "У меня проблема с...", is_outgoing: true, created_at: new Date().toISOString() }
+            ];
+            
+            messages.forEach(msg => {
+                addChatMessage(msg.text, msg.is_outgoing);
+            });
+        }
+
+        // Добавление сообщения в чат
+        function addChatMessage(text, isOutgoing) {
+            const chat = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${isOutgoing ? 'outgoing' : 'incoming'}`;
+            messageDiv.textContent = text;
+            chat.appendChild(messageDiv);
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        // Отправка сообщения в чате
+        function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            
+            if (message && state.currentChatTicket) {
+                // Отправка данных в бота
+                tg.sendData(JSON.stringify({
+                    action: "send_message",
+                    ticket_id: state.currentChatTicket.id,
+                    text: message
+                }));
+                
+                addChatMessage(message, true);
+                input.value = '';
+            }
+        }
+
+        // Обработка нажатия Enter в чате
+        function handleChatInputKeypress(event) {
+            if (event.key === 'Enter') {
+                sendChatMessage();
+            }
         }
 
         // Создание тикета
